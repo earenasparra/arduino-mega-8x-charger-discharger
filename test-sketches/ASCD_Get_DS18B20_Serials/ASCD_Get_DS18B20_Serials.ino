@@ -84,9 +84,9 @@ void setup(void)
 
   byte i = 0;
   byte address[8];
-  if (oneWire.search(tempSensorSerial[i]))
-  {
-    do
+
+  for (int i = 0; i < deviceCount; i++) {// Create w1 device index array
+    if (sensors.getAddress(tempSensorSerial[i],i))
     {
       delay(2000);
       Serial.print("Device ");
@@ -95,9 +95,25 @@ void setup(void)
       printAddress(tempSensorSerial[i], false, false, false);
       Serial.println();
       sensors.setResolution(tempSensorSerial[i], TEMPERATURE_PRECISION);
-      i++;
-    } while (oneWire.search(tempSensorSerial[i]));
+    }
   }
+  /*
+  if (oneWire.search(address))
+  {
+    do
+    {
+      
+      delay(2000);
+      Serial.print("Device ");
+      Serial.print(i);
+      Serial.print(" Address: ");
+      printAddress(tempSensorSerial[i], false, false, false);
+      Serial.println();
+      sensors.setResolution(tempSensorSerial[i], TEMPERATURE_PRECISION);
+      i++;
+    } while (oneWire.search(address));
+  }
+  */
 
   sensors.requestTemperatures();
   for (byte i = 0; i < deviceCount; i++)
@@ -105,6 +121,8 @@ void setup(void)
     sensorTempAverage += sensors.getTempC(tempSensorSerial[i]);
   }
   sensorTempAverage = sensorTempAverage / deviceCount;
+  Serial.print("Average Temp: ");
+  Serial.println(sensorTempAverage);
 }
 
 void loop(void)
